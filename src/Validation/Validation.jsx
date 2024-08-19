@@ -5,3 +5,7 @@ export const signUp = Yup.object({
   email: Yup.string().email().required("Email is required"),
   password: Yup.string().min(8).required("Password should be 8 characters"),
 });
+export const signIn = Yup.object({
+  email: Yup.string().email().required("Email is required"),
+  password: Yup.string().min(8).required("Password should be 8 characters"),
+});

@@ -1,33 +1,37 @@
 import { useFormik } from "formik";
 import React, { useState } from "react";
-import { signUp } from "../../Validation/Validation";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { signIn } from "../../Validation/Validation";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { BeatLoader } from "react-spinners";
-const RegFormComponent = ({ toast }) => {
+import { useDispatch } from "react-redux";
+import { LoggedInUser } from "../../features/slices/LoginSlice";
+
+const LoginFormComponent = ({ toast }) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const auth = getAuth();
   const initialValues = {
-    fullName: "",
     email: "",
     password: "",
   };
   const formik = useFormik({
     initialValues: initialValues,
     onSubmit: () => {
-      createNewUser();
+      signInUser();
     },
-    validationSchema: signUp,
+    validationSchema: signIn,
   });
-  const createNewUser = () => {
+  const signInUser = () => {
     setLoading(true);
-    createUserWithEmailAndPassword(
+    signInWithEmailAndPassword(
       auth,
       formik.values.email,
       formik.values.password
     )
-      .then(() => {
+      .then(({ user }) => {
         setLoading(false);
-        toast.success("Successfully Registered", {
+        dispatch(LoggedInUser(user.uid));
+        toast.success("Successfully Loggedin", {
           position: "top-right",
           autoClose: 1000,
           hideProgressBar: false,
@@ -39,8 +43,10 @@ const RegFormComponent = ({ toast }) => {
         });
       })
       .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
         setLoading(false);
-        toast.error("An error occured during registration", {
+        toast.error(errorMessage, {
           position: "top-right",
           autoClose: 1000,
           hideProgressBar: false,
@@ -55,23 +61,8 @@ const RegFormComponent = ({ toast }) => {
   return (
     <>
       <div>
-        <h1 className="font-fontBold text-xl mb-4">
-          Registration for your new journey
-        </h1>
+        <h1 className="font-fontBold text-xl mb-4">Log in to your account</h1>
         <form onSubmit={formik.handleSubmit}>
-          <input
-            name="fullName"
-            value={formik.values.fullName}
-            onChange={formik.handleChange}
-            type="text"
-            placeholder="enter your name"
-            className="w-full px-3 py-2 mb-3 border border-slate-400 rounded-md outline-none"
-          />
-          {formik.errors.fullName && formik.touched.fullName && (
-            <p className="font-fontRegular text-red-500 text-sm mb-5">
-              {formik.errors.fullName}
-            </p>
-          )}
           <input
             name="email"
             value={formik.values.email}
@@ -102,15 +93,15 @@ const RegFormComponent = ({ toast }) => {
             disabled={loading}
             className="bg-slate-900 text-white font-fontBold text-base rounded-md w-full py-3"
           >
-            {loading ? <BeatLoader color="#fff" size={5} /> : "Sign Up"}
+            {loading ? <BeatLoader color="#fff" size={5} /> : "Sign In"}
           </button>
         </form>
         <p className="font-fontRegular text-base text-gray-400 mt-5 text-center">
-          Already Have an account? Sign In
+          Don't Have an account? Sign Up
         </p>
       </div>
     </>
   );
 };
 
-export default RegFormComponent;
+export default LoginFormComponent;
