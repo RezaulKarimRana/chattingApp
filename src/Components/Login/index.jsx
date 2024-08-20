@@ -5,10 +5,12 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { BeatLoader } from "react-spinners";
 import { useDispatch } from "react-redux";
 import { LoggedInUser } from "../../features/slices/LoginSlice";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginFormComponent = ({ toast }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const auth = getAuth();
   const initialValues = {
     email: "",
@@ -31,6 +33,7 @@ const LoginFormComponent = ({ toast }) => {
       .then(({ user }) => {
         setLoading(false);
         dispatch(LoggedInUser(user.uid));
+        localStorage.setItem("user", JSON.stringify(user.uid));
         toast.success("Successfully Loggedin", {
           position: "top-right",
           autoClose: 1000,
@@ -41,6 +44,7 @@ const LoginFormComponent = ({ toast }) => {
           progress: undefined,
           theme: "light",
         });
+        navigate("/");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -97,7 +101,10 @@ const LoginFormComponent = ({ toast }) => {
           </button>
         </form>
         <p className="font-fontRegular text-base text-gray-400 mt-5 text-center">
-          Don't Have an account? Sign Up
+          Don't Have an account?{" "}
+          <Link to="/registration" className="text-blue-500 hover:underline">
+            Sign Up
+          </Link>
         </p>
       </div>
     </>

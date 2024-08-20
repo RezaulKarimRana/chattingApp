@@ -3,8 +3,10 @@ import React, { useState } from "react";
 import { signUp } from "../../Validation/Validation";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { BeatLoader } from "react-spinners";
+import { Link, redirect, useNavigate } from "react-router-dom";
 const RegFormComponent = ({ toast }) => {
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const auth = getAuth();
   const initialValues = {
     fullName: "",
@@ -37,6 +39,11 @@ const RegFormComponent = ({ toast }) => {
           progress: undefined,
           theme: "light",
         });
+        let redirect;
+        clearTimeout(redirect);
+        redirect = setTimeout(() => {
+          navigate("/login");
+        }, 2000);
       })
       .catch((error) => {
         setLoading(false);
@@ -106,7 +113,10 @@ const RegFormComponent = ({ toast }) => {
           </button>
         </form>
         <p className="font-fontRegular text-base text-gray-400 mt-5 text-center">
-          Already Have an account? Sign In
+          Already Have an account?{" "}
+          <Link to="/login" className="text-blue-500 hover:underline">
+            Sign In
+          </Link>
         </p>
       </div>
     </>
