@@ -10,12 +10,17 @@ import Home from "./pages/Home";
 import "react-toastify/dist/ReactToastify.css";
 import LoggedInUserRoute from "./PrivateRoute/LoggedInUserRoute";
 import NotLoggedInUserRoute from "./PrivateRoute/NotLoggedInUserRoute";
+import Messages from "./pages/Messages";
+import RootLayout from "./Components/RootLayout";
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route>
         <Route element={<LoggedInUserRoute />}>
-          <Route path="/" element={<Home />}></Route>
+          <Route element={<RootLayout />}>
+            <Route path="/" element={<Home />}></Route>
+            <Route path="/message" element={<Messages />}></Route>
+          </Route>
         </Route>
         <Route element={<NotLoggedInUserRoute />}>
           <Route path="/registration" element={<Registration />}></Route>
