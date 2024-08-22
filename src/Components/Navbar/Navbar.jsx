@@ -40,7 +40,7 @@ const Navbar = () => {
               location.pathname == "/"
                 ? "text-white bg-[#6CD0FB]"
                 : "text-[#292D32] bg-white"
-            } w-10 h-10 rounded-full bg-white flex items-center justify-center`}
+            } w-10 h-10 rounded-full flex items-center justify-center`}
           >
             <FriendsIcon />
           </Link>
@@ -50,7 +50,7 @@ const Navbar = () => {
               location.pathname == "/message"
                 ? "text-white bg-[#6CD0FB]"
                 : "text-[#292D32] bg-white"
-            } w-10 h-10 rounded-full bg-white flex items-center justify-center`}
+            } w-10 h-10 rounded-full flex items-center justify-center`}
           >
             <MessageIcon />
           </Link>
