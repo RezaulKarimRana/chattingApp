@@ -5,6 +5,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { LoggedOutUser } from "../../features/slices/LoginSlice";
+import { CameraIcon } from "../../svg/Camera";
 
 const Navbar = () => {
   const location = useLocation();
@@ -26,7 +27,12 @@ const Navbar = () => {
     <>
       <div className="flex justify-between items-center py-3 bg-slate-900 px-5">
         <div className="flex items-center gap-x-2">
-          <div className="w-14 h-14 rounded-full bg-orange-200 overflow-hidden"></div>
+          <div className="relative">
+            <div className="w-16 h-16 rounded-full bg-orange-200 overflow-hidden"></div>
+            <div className="absolute bottom-0 right-0 w-5 h-5 bg-white flex rounded-full items-center justify-center">
+              <CameraIcon />
+            </div>
+          </div>
           <div>
             <span className="font-fontRegular text-white">
               Md. Rezaul Karim

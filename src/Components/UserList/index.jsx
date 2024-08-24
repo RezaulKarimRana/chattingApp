@@ -4,7 +4,7 @@ import { AddFriendIcon } from "../../svg/AddFriend";
 const UserList = () => {
   return (
     <>
-      <div className="px-8 pt-3">
+      <div className="px-8 pt-3 bg-[#FBFBFB] h-[700px]">
         <h1 className="font-fontBold text-black text-xl">All Users</h1>
         <div className="flex items-center justify-between mt-5">
           <div className="flex items-center gap-x-2">

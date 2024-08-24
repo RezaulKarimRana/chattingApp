@@ -9,7 +9,7 @@ const Home = () => {
         <div className="w-full">
           <UserList />
         </div>
-        <div className="w-full grid grid-cols-2 gap-x-20">
+        <div className="w-full grid grid-cols-2 gap-x-10">
           <div>
             <FriendRequest />
           </div>
