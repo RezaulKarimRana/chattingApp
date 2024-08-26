@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FriendsIcon } from "../../svg/Friends";
 import { MessageIcon } from "../../svg/Message";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -6,8 +6,11 @@ import { getAuth, signOut } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { LoggedOutUser } from "../../features/slices/LoginSlice";
 import { CameraIcon } from "../../svg/Camera";
+import { createPortal } from "react-dom";
+import Modals from "../Modals";
 
 const Navbar = () => {
+  const [show, setShow] = useState(false);
   const location = useLocation();
   const auth = getAuth();
   const navigate = useNavigate();
@@ -29,7 +32,10 @@ const Navbar = () => {
         <div className="flex items-center gap-x-2">
           <div className="relative">
             <div className="w-16 h-16 rounded-full bg-orange-200 overflow-hidden"></div>
-            <div className="absolute bottom-0 right-0 w-5 h-5 bg-white flex rounded-full items-center justify-center">
+            <div
+              className="absolute bottom-0 right-0 w-5 h-5 bg-white flex rounded-full items-center justify-center cursor-pointer"
+              onClick={() => setShow(true)}
+            >
               <CameraIcon />
             </div>
           </div>
@@ -69,6 +75,7 @@ const Navbar = () => {
             Logout
           </button>
         </div>
+        {show && createPortal(<Modals setShow={setShow} />, document.body)}
       </div>
     </>
   );
