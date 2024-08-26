@@ -2,11 +2,25 @@ import React, { useRef, useState } from "react";
 import { CrossIcon } from "../../svg/Cross";
 import { UploadIcon } from "../../svg/Upload";
 import ImageCropper from "../ImageCropper";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadString,
+} from "firebase/storage";
+import { useDispatch, useSelector } from "react-redux";
+import { getAuth, updateProfile } from "firebase/auth";
+import { LoggedInUser } from "../../features/slices/LoginSlice";
 const Modals = ({ setShow }) => {
+  const user = useSelector((user) => user.login.loggedIn);
+  const storage = getStorage();
+  const auth = getAuth();
+  const storageRef = ref(storage, user);
   const [image, setImage] = useState();
-  const [cropData, setCropData] = useState("#");
+  const [cropData, setCropData] = useState();
   const cropperRef = useRef();
   const fileRef = useRef(null);
+  const dispatch = useDispatch();
   const handleChange = (e) => {
     e.preventDefault();
     let files;
@@ -20,6 +34,28 @@ const Modals = ({ setShow }) => {
       setImage(reader.result);
     };
     reader.readAsDataURL(files[0]);
+  };
+  const getCropData = () => {
+    if (typeof cropperRef.current?.cropper !== "undefined") {
+      setCropData(cropperRef.current?.cropper.getCroppedCanvas().toDataURL());
+      const message4 = cropperRef.current?.cropper
+        .getCroppedCanvas()
+        .toDataURL();
+      uploadString(storageRef, message4, "data_url").then((snapshot) => {
+        getDownloadURL(storageRef).then((downloadURL) => {
+          updateProfile(auth.currentUser, {
+            photoURL: downloadURL,
+          }).then(() => {
+            dispatch(LoggedInUser({ ...user, photoURL: downloadURL }));
+            localStorage.setItem(
+              "user",
+              JSON.stringify({ ...user, photoURL: downloadURL })
+            );
+            setShow(false);
+          });
+        });
+      });
+    }
   };
   return (
     <>
@@ -61,6 +97,7 @@ const Modals = ({ setShow }) => {
             setImage={setImage}
             cropperRef={cropperRef}
             image={image}
+            getCropData={getCropData}
           />
         )}
       </div>

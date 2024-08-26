@@ -2,7 +2,7 @@ import React from "react";
 import { CrossIcon } from "../../svg/Cross";
 import { Cropper } from "react-cropper";
 
-const ImageCropper = ({ setImage, cropperRef, image }) => {
+const ImageCropper = ({ setImage, cropperRef, image, getCropData }) => {
   return (
     <>
       <div className="fixed top-0 left-0 w-full h-screen flex  items-center justify-center">
@@ -18,30 +18,36 @@ const ImageCropper = ({ setImage, cropperRef, image }) => {
               <CrossIcon />
             </div>
           </div>
-        </div>
-        <div className="w-20 h-20 rounded-full mx-auto overflow-hidden">
-          <div
-            className="img-preview"
-            style={{ width: "100%", float: "left", height: "300px" }}
-          />
-        </div>
-        <div>
-          <Cropper
-            ref={cropperRef}
-            style={{ height: 400, width: "100%" }}
-            zoomTo={0.5}
-            initialAspectRatio={1}
-            preview=".img-preview"
-            src={image}
-            viewMode={1}
-            minCropBoxHeight={10}
-            minCropBoxWidth={10}
-            background={false}
-            responsive={true}
-            autoCropArea={1}
-            checkOrientation={false}
-            guides={true}
-          />
+          <div className="w-20 h-20 rounded-full mx-auto overflow-hidden">
+            <div
+              className="img-preview"
+              style={{ width: "100%", float: "left", height: "300px" }}
+            />
+          </div>
+          <div className="mt-5">
+            <Cropper
+              ref={cropperRef}
+              style={{ height: 400, width: "100%" }}
+              zoomTo={0.5}
+              initialAspectRatio={1}
+              preview=".img-preview"
+              src={image}
+              viewMode={1}
+              minCropBoxHeight={10}
+              minCropBoxWidth={10}
+              background={false}
+              responsive={true}
+              autoCropArea={1}
+              checkOrientation={false}
+              guides={true}
+            />
+          </div>
+          <button
+            className="bg-[#6CD0FB] text-white font-fontBold w-full py-2 rounded-md mt-3"
+            onClick={getCropData}
+          >
+            Upload
+          </button>
         </div>
       </div>
     </>
