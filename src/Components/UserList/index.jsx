@@ -1,55 +1,66 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AddFriendIcon } from "../../svg/AddFriend";
-
+import { getDatabase, ref, onValue } from "firebase/database";
+import { useSelector } from "react-redux";
+import { getDownloadURL, getStorage, ref as Ref } from "firebase/storage";
+import avatarImage from "../../assets/man_avatar.png";
 const UserList = () => {
+  const user = useSelector((user) => user.login.loggedIn);
+  const db = getDatabase();
+  const storage = getStorage();
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    const starCountRef = ref(db, "users/");
+    onValue(starCountRef, (snapshot) => {
+      const users = [];
+      snapshot.forEach((userList) => {
+        if (user.uid !== userList.key) {
+          getDownloadURL(Ref(storage, userList.key))
+            .then((downloadURL) => {
+              users.push({
+                ...userList.val(),
+                id: userList.key,
+                photoURL: downloadURL,
+              });
+            })
+            .catch((error) => {
+              users.push({
+                ...userList.val(),
+                id: userList.key,
+                photoURL: null,
+              });
+            })
+            .then(() => {
+              setUsers([...users]);
+            });
+        }
+      });
+      const data = snapshot.val();
+      updateStarCount(postElement, data);
+    });
+  }, [db, user.uid, storage]);
   return (
     <>
       <div className="px-8 pt-3 bg-[#FBFBFB] h-[700px]">
         <h1 className="font-fontBold text-black text-xl">All Users</h1>
-        <div className="flex items-center justify-between mt-5">
-          <div className="flex items-center gap-x-2">
-            <div className="w-12 h-12 rounded-full bg-purple-600 overflow-hidden"></div>
-            <h3 className="font-fontRegular text-black text-lg">
-              Md. Rezaul Karim
-            </h3>
-          </div>
-          <div className="text-black cursor-pointer">
-            <AddFriendIcon />
-          </div>
-        </div>
-        <div className="flex items-center justify-between mt-5">
-          <div className="flex items-center gap-x-2">
-            <div className="w-12 h-12 rounded-full bg-purple-600 overflow-hidden"></div>
-            <h3 className="font-fontRegular text-black text-lg">
-              Md. Rezaul Karim
-            </h3>
-          </div>
-          <div className="text-black cursor-pointer">
-            <AddFriendIcon />
-          </div>
-        </div>
-        <div className="flex items-center justify-between mt-5">
-          <div className="flex items-center gap-x-2">
-            <div className="w-12 h-12 rounded-full bg-purple-600 overflow-hidden"></div>
-            <h3 className="font-fontRegular text-black text-lg">
-              Md. Rezaul Karim
-            </h3>
-          </div>
-          <div className="text-black cursor-pointer">
-            <AddFriendIcon />
-          </div>
-        </div>
-        <div className="flex items-center justify-between mt-5">
-          <div className="flex items-center gap-x-2">
-            <div className="w-12 h-12 rounded-full bg-purple-600 overflow-hidden"></div>
-            <h3 className="font-fontRegular text-black text-lg">
-              Md. Rezaul Karim
-            </h3>
-          </div>
-          <div className="text-black cursor-pointer">
-            <AddFriendIcon />
-          </div>
-        </div>
+        {users.map((item) => {
+          <div className="flex items-center justify-between mt-5">
+            <div className="flex items-center gap-x-2">
+              <div className="w-12 h-12 rounded-full overflow-hidden">
+                <img
+                  src={item.photoURL || avatarImage}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="font-fontRegular text-black text-lg">
+                {item.username}
+              </h3>
+            </div>
+            <div className="text-black cursor-pointer">
+              <AddFriendIcon />
+            </div>
+          </div>;
+        })}
       </div>
     </>
   );

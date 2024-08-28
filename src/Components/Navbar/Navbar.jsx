@@ -44,7 +44,7 @@ const Navbar = () => {
           </div>
           <div>
             <span className="font-fontRegular text-white">
-              Md. Rezaul Karim
+              {user.displayName}
             </span>
           </div>
         </div>

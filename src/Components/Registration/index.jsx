@@ -1,12 +1,18 @@
 import { useFormik } from "formik";
 import React, { useState } from "react";
 import { signUp } from "../../Validation/Validation";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { BeatLoader } from "react-spinners";
 import { Link, redirect, useNavigate } from "react-router-dom";
+import { getDatabase, ref, set } from "firebase/database";
 const RegFormComponent = ({ toast }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const db = getDatabase();
   const auth = getAuth();
   const initialValues = {
     fullName: "",
@@ -26,38 +32,48 @@ const RegFormComponent = ({ toast }) => {
       auth,
       formik.values.email,
       formik.values.password
-    )
-      .then(() => {
-        setLoading(false);
-        toast.success("Successfully Registered", {
-          position: "top-right",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        let redirect;
-        clearTimeout(redirect);
-        redirect = setTimeout(() => {
-          navigate("/login");
-        }, 2000);
+    ).then(({ user }) => {
+      setLoading(false);
+      updateProfile(auth.currentUser, {
+        displayName: formik.values.fullName,
       })
-      .catch((error) => {
-        setLoading(false);
-        toast.error("An error occured during registration", {
-          position: "top-right",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
+        .then(() => {
+          toast.success("Successfully Registered", {
+            position: "top-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+          let redirect;
+          clearTimeout(redirect);
+          redirect = setTimeout(() => {
+            navigate("/login");
+          }, 2000);
+        })
+        .then(() => {
+          set(ref(db, "users/" + user.uid), {
+            username: user.displayName,
+            email: user.email,
+          });
+        })
+        .catch((error) => {
+          setLoading(false);
+          toast.error("An error occured during registration", {
+            position: "top-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
         });
-      });
+    });
   };
   return (
     <>
