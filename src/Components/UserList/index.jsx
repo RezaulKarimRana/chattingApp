@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { AddFriendIcon } from "../../svg/AddFriend";
-import { getDatabase, ref, onValue, set, push } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  onValue,
+  set,
+  push,
+  remove,
+} from "firebase/database";
 import { useSelector } from "react-redux";
 import { getDownloadURL, getStorage, ref as Ref } from "firebase/storage";
 import avatarImage from "../../assets/man_avatar.png";
@@ -10,6 +17,7 @@ const UserList = () => {
   const storage = getStorage();
   const [users, setUsers] = useState([]);
   const [friendReqList, setFriendReqList] = useState([]);
+  const [cancelReq, setCancelReq] = useState([]);
   useEffect(() => {
     const starCountRef = ref(db, "users/");
     onValue(starCountRef, (snapshot) => {
@@ -55,13 +63,23 @@ const UserList = () => {
     const starCountRef = ref(db, "friendRequest/");
     onValue(starCountRef, (snapshot) => {
       let reqArr = [];
+      let cancelReq = [];
       snapshot.forEach((item) => {
         reqArr.push(item.val().reveiverId + "" + item.val().senderId);
+        cancelReq.push({ ...item.val(), id: item.key });
       });
       setFriendReqList(reqArr);
+      setCancelReq(cancelReq);
     });
   }, [db]);
-  const handleRemove = () => {};
+  const handleCancelReq = (itemId) => {
+    const reqToCancel = cancelReq.find(
+      (req) => req.receiverId == itemId && req.senderId == user.uid
+    );
+    if (reqToCancel) {
+      remove(ref(db, "friendRequest/" + reqToCancel.id));
+    }
+  };
   return (
     <>
       <div className="px-8 pt-3 bg-[#FBFBFB] h-[700px]">
@@ -83,7 +101,7 @@ const UserList = () => {
             friendReqList.includes(user.uid + "" + item.id) ? (
               <button
                 className="bg-red-500 px-4 py-2 rounded-md text-white font-fontRegular"
-                onClick={() => handleRemove(item)}
+                onClick={() => handleCancelReq(item.id)}
               >
                 Cancel Request
               </button>
