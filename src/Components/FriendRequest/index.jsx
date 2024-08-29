@@ -43,7 +43,7 @@ const FriendRequest = () => {
         {friendReqList?.map((item) => (
           <div className="flex items-center justify-between mt-3" key={item.id}>
             <div className="flex items-center gap-x-2">
-              <div className="w-12 h-12 rounded-full bg-purple-600 overflow-hidden">
+              <div className="w-12 h-12 rounded-full overflow-hidden">
                 <img src={item.currentProfile || avatarImage} />
               </div>
               <h3 className="font-fontRegular text-black text-lg">
