@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AddFriendIcon } from "../../svg/AddFriend";
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, ref, onValue, set, push } from "firebase/database";
 import { useSelector } from "react-redux";
 import { getDownloadURL, getStorage, ref as Ref } from "firebase/storage";
 import avatarImage from "../../assets/man_avatar.png";
@@ -9,6 +9,7 @@ const UserList = () => {
   const db = getDatabase();
   const storage = getStorage();
   const [users, setUsers] = useState([]);
+  const [friendReqList, setFriendReqList] = useState([]);
   useEffect(() => {
     const starCountRef = ref(db, "users/");
     onValue(starCountRef, (snapshot) => {
@@ -39,12 +40,34 @@ const UserList = () => {
       updateStarCount(postElement, data);
     });
   }, [db, user.uid, storage]);
+  const handleFriendRequest = (data) => {
+    set(push(ref(db, "friendRequest")), {
+      senderName: user.displayName,
+      senderId: user.uid,
+      senderProfile: user.photoURL ?? "/src/assets/man_avatar.png",
+      receiverName: data.username,
+      reveiverId: data.id,
+      receiverProfile: data.photoURL ?? "/src/assets/man_avatar.png",
+    });
+  };
+  //show friend request
+  useEffect(() => {
+    const starCountRef = ref(db, "friendRequest/");
+    onValue(starCountRef, (snapshot) => {
+      let reqArr = [];
+      snapshot.forEach((item) => {
+        reqArr.push(item.val().reveiverId + "" + item.val().senderId);
+      });
+      setFriendReqList(reqArr);
+    });
+  }, [db]);
+  const handleRemove = () => {};
   return (
     <>
       <div className="px-8 pt-3 bg-[#FBFBFB] h-[700px]">
         <h1 className="font-fontBold text-black text-xl">All Users</h1>
-        {users.map((item) => {
-          <div className="flex items-center justify-between mt-5">
+        {users.map((item, i) => {
+          <div className="flex items-center justify-between mt-5" key={i}>
             <div className="flex items-center gap-x-2">
               <div className="w-12 h-12 rounded-full overflow-hidden">
                 <img
@@ -56,9 +79,22 @@ const UserList = () => {
                 {item.username}
               </h3>
             </div>
-            <div className="text-black cursor-pointer">
-              <AddFriendIcon />
-            </div>
+            {friendReqList.includes(item.id + "" + user.uid) ||
+            friendReqList.includes(user.uid + "" + item.id) ? (
+              <button
+                className="bg-red-500 px-4 py-2 rounded-md text-white font-fontRegular"
+                onClick={() => handleRemove(item)}
+              >
+                Cancel Request
+              </button>
+            ) : (
+              <div
+                className="text-black cursor-pointer"
+                onClick={() => handleFriendRequest(item)}
+              >
+                <AddFriendIcon />
+              </div>
+            )}
           </div>;
         })}
       </div>
