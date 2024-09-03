@@ -1,6 +1,7 @@
 import React from "react";
 import { EmojiIcon } from "../../svg/Emoji";
 import { GalleryIcon } from "../../svg/Gallery";
+import demoMedio from "../../assets/Table.jpg";
 const Chatting = () => {
   return (
     <>
@@ -15,7 +16,38 @@ const Chatting = () => {
             </div>
           </div>
         </div>
-        <div className="h-[530px] bg-[#FBFBFB] px-5">alsd</div>
+        <div className="h-[530px] bg-[#FBFBFB] px-5 py-3 overflow-y-auto">
+          {/*sender message*/}
+          <div className="w-[60%] ml-auto">
+            <p className="text-white font-fontRegular text-sm bg-slate-500 p-4 rounded-md inline-block">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam,
+              possimus!
+            </p>
+          </div>
+          {/*receiver message*/}
+          <div className="w-[60%] mr-auto my-3">
+            <p className="text-black font-fontRegular text-sm bg-cyan-300 p-4 rounded-md inline-block">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam,
+              possimus!
+            </p>
+          </div>
+          {/*sender message*/}
+          <div className="w-[60%] ml-auto overflow-hidden my-3">
+            <img
+              src={demoMedio}
+              alt="cat"
+              className="w-full h-full object-cover rounded-md"
+            />
+          </div>
+          {/*receiver message*/}
+          <div className="w-[60%] mr-auto overflow-hidden my-3">
+            <img
+              src={demoMedio}
+              alt="cat"
+              className="w-full h-full object-cover rounded-md"
+            />
+          </div>
+        </div>
         <div className="bg-[#F5F5F5] py-4">
           <div className="bg-white w-[532px] rounded-md mx-auto py-3 flex items-center justify-center gap-x-3">
             <div className="flex items-center gap-x-2 w-[15%]">
